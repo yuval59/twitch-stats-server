@@ -6,6 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
+import { Badges } from '../../types'
 import { User } from './user'
 
 @Entity()
@@ -18,11 +19,14 @@ export class Message extends BaseEntity {
   })
   user: User
 
+  @Column('varchar')
+  channel: string
+
   @Column('text')
   message: string
 
   @Column('json')
-  tags: string[]
+  badges: Badges
 
   @CreateDateColumn()
   timestamp: Date

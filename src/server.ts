@@ -1,13 +1,9 @@
-import { addMessage, initDB } from './db'
+import { initDB } from './db'
+import { initTwitch } from './twitch/server'
 
 const startServer = async () => {
   await initDB()
-
-  addMessage({
-    username: 'yuval59',
-    message: 'test',
-    tags: [],
-  })
+  await initTwitch()
 }
 
 export default startServer

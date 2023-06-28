@@ -1,1 +1,1 @@
-export { addMessage, addUser, initDB } from './dal'
+export { addMessage, initDB } from './dal'

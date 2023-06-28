@@ -25,13 +25,14 @@ const AppDataSource = new DataSource({
 export const initDB = () =>
   AppDataSource.initialize().then(() => console.log('Database connected'))
 
-export const addUser = async (params: NewUser) => {
-  const { username, tags } = params
+const addUser = async (params: NewUser) => {
+  const { username, badges, channel } = params
 
   const user = new User()
 
   user.username = username
-  user.tags = tags
+  user.channel = channel
+  user.badges = badges
 
   await AppDataSource.manager.save(user)
 
@@ -41,13 +42,14 @@ export const addUser = async (params: NewUser) => {
 }
 
 const getUserOrCreate = async (params: NewUser) => {
-  const { tags, username } = params
+  const { badges, username, channel } = params
 
   const user =
-    (await User.findOneBy({ username })) ?? (await addUser({ username, tags }))
+    (await User.findOneBy({ username, channel })) ??
+    (await addUser({ username, badges, channel }))
 
-  if (user.tags != tags) {
-    user.tags = tags
+  if (user.badges != badges) {
+    user.badges = badges
     await AppDataSource.manager.save(user)
   }
 
@@ -55,17 +57,21 @@ const getUserOrCreate = async (params: NewUser) => {
 }
 
 export const addMessage = async (params: NewMessage) => {
-  const { message, tags, username } = params
+  const { message, badges, username, channel } =
+    params.channel[0] == '#'
+      ? { ...params, channel: params.channel.replace('#', '') }
+      : params
 
   const newMessage = new Message()
 
-  const user = await getUserOrCreate({ username, tags })
+  const user = await getUserOrCreate({ username, badges, channel })
 
   newMessage.user = user
+  newMessage.channel = channel
+  newMessage.badges = badges
   newMessage.message = message
-  newMessage.tags = tags
 
   await AppDataSource.manager.save(newMessage)
 
-  console.log(`message has been saved. message id is ${newMessage.id}`)
+  console.log(`[${channel}] ${username}: ${message}`)
 }

@@ -8,6 +8,8 @@ export const env = createEnv({
     DB_PASS: z.string(),
     DB_PORT: z.string(),
     DB_DATABASE: z.string(),
+    TWITCH_OAUTH_TOKEN: z.string(),
+    TWITCH_USERNAME: z.string(),
   },
   runtimeEnv: {
     DB_HOST: process.env.DB_HOST,
@@ -15,5 +17,7 @@ export const env = createEnv({
     DB_PASS: process.env.DB_PASS,
     DB_PORT: process.env.DB_PORT,
     DB_DATABASE: process.env.DB_DATABASE,
+    TWITCH_OAUTH_TOKEN: process.env.TWITCH_OAUTH_TOKEN,
+    TWITCH_USERNAME: process.env.TWITCH_USERNAME,
   },
 })

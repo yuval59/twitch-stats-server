@@ -7,6 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
+import { Badges } from '../../types'
 import { Message } from './message'
 
 @Entity()
@@ -14,11 +15,14 @@ export class User extends BaseEntity {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column('varchar', { unique: true })
+  @Column('varchar')
   username: string
 
+  @Column('varchar')
+  channel: string
+
   @Column('json')
-  tags: string[]
+  badges: Badges
 
   @OneToMany(() => Message, (message) => message.user)
   messages: Message[]
