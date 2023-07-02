@@ -28,3 +28,25 @@ export type Badges = {
   ['sub-gifter']?: string | undefined
   [other: string]: string | undefined
 }
+
+export type SaveDailyParams = {
+  date: string
+}
+
+export type ByChannelObject = {
+  [channel: string]: DailyChannelInfo
+}
+
+export type DailyChannelInfo = {
+  messages: number
+  byBadge: ByBadgeObject
+  byUser: ByNameObject
+}
+
+type ByBadgeObject = {
+  [badgeName: keyof Badges]: number
+}
+
+type ByNameObject = {
+  [username: string]: number
+}

@@ -7,7 +7,7 @@ import {
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { Badges } from '../../types'
+import { Badges } from '../types'
 import { Message } from './message'
 
 @Entity()

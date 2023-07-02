@@ -1,1 +1,1 @@
-export { addMessage, initDB } from './dal'
+export { addMessage, initDB, saveDaily } from './dal'

@@ -6,7 +6,7 @@ import {
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Badges } from '../../types'
+import { Badges } from '../types'
 import { User } from './user'
 
 @Entity()
@@ -16,6 +16,7 @@ export class Message extends BaseEntity {
 
   @ManyToOne(() => User, (user) => user.messages, {
     createForeignKeyConstraints: false,
+    eager: true,
   })
   user: User
 

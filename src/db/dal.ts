@@ -1,10 +1,12 @@
 import dayjs from 'dayjs'
 import isSameOrAfter from 'dayjs/plugin/isSameOrAfter'
 import 'reflect-metadata'
-import { DataSource } from 'typeorm'
+import { Between, DataSource } from 'typeorm'
+import { DATABASE_DATE_FORMAT } from '../constants'
 import { env } from '../env'
-import { NewMessage, NewUser } from '../types'
 import { Message, User } from './entities'
+import { Daily } from './entities/daily'
+import { ByChannelObject, NewMessage, NewUser, SaveDailyParams } from './types'
 
 dayjs.extend(isSameOrAfter)
 
@@ -19,7 +21,7 @@ const AppDataSource = new DataSource({
   // synchronize: true,
   ssl: { rejectUnauthorized: true },
 
-  entities: [Message, User],
+  entities: [Message, User, Daily],
 })
 
 export const initDB = () =>
@@ -74,4 +76,52 @@ export const addMessage = async (params: NewMessage) => {
   await AppDataSource.manager.save(newMessage)
 
   console.log(`[${channel}] ${username}: ${message}`)
+}
+
+export const saveDaily = async (params: SaveDailyParams) => {
+  const { date } = params
+
+  const dateObj = dayjs(date)
+
+  const messages = await Message.find({
+    where: {
+      timestamp: Between(
+        new Date(dateObj.year(), dateObj.month(), dateObj.date()),
+        new Date(dateObj.year(), dateObj.month(), dateObj.date() + 1)
+      ),
+    },
+  })
+
+  const byChannel: ByChannelObject = {}
+
+  for (const message of messages) {
+    if (!byChannel[message.channel])
+      byChannel[message.channel] = {
+        messages: 0,
+        byBadge: {},
+        byUser: {},
+      }
+
+    byChannel[message.channel].messages += 1
+
+    byChannel[message.channel].byUser[message.user.username]
+      ? (byChannel[message.channel].byUser[message.user.username] += 1)
+      : (byChannel[message.channel].byUser[message.user.username] = 1)
+
+    for (const badge in message.badges)
+      byChannel[message.channel].byBadge[badge]
+        ? (byChannel[message.channel].byBadge[badge] += 1)
+        : (byChannel[message.channel].byBadge[badge] = 1)
+  }
+
+  for (const channel in byChannel) {
+    const newDaily = new Daily()
+    newDaily.channel = channel
+    newDaily.day = dayjs(
+      new Date(dateObj.year(), dateObj.month(), dateObj.date())
+    ).format(DATABASE_DATE_FORMAT)
+    newDaily.data = byChannel[channel]
+
+    await AppDataSource.manager.save(newDaily)
+  }
 }

@@ -3,16 +3,20 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
-    "dev": "ts-node src/index"
+    "dev": "ts-node src/index",
+    "dev:server": "ts-node src/dev/server",
+    "dev:twitch": "ts-node src/dev/twitch"
   },
   "author": "Yuval Maron",
   "license": "MIT",
   "dependencies": {
     "@t3-oss/env-core": "^0.6.0",
+    "@types/node-cron": "^3.0.8",
     "dayjs": "^1.11.8",
     "dotenv": "^16.3.1",
     "express": "^4.18.2",
     "mysql2": "^3.4.2",
+    "node-cron": "^3.0.2",
     "tmi.js": "^1.8.5",
     "typeorm": "^0.3.17",
     "zod": "^3.21.4"
