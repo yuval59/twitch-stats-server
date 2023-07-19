@@ -1,5 +1,4 @@
 import tmi from 'tmi.js'
-import { CHANNELS } from '../constants'
 import { addMessage } from '../db'
 import { env } from '../env'
 
@@ -14,22 +13,46 @@ const client = new tmi.Client({
     username: env.TWITCH_USERNAME,
     password: env.TWITCH_OAUTH_TOKEN,
   },
-  channels: CHANNELS,
 })
 
-export const initTwitch = () =>
-  client
-    .connect()
-    .catch((error) => console.error(error))
-    .then(() => console.log(`Connected`))
+client.on(
+  'message',
+  (
+    channel: string,
+    tags: tmi.ChatUserstate,
+    message: string,
+    self: boolean
+  ) => {
+    if (self || tags['message-type'] != 'chat') return
 
-client.on('message', (channel, tags, message, self) => {
-  if (self || tags['message-type'] != 'chat') return
+    try {
+      addMessage({
+        message,
+        channelName: channel,
+        badges: tags.badges ?? {},
+        username: tags.username ?? '',
+      })
+    } catch (err) {
+      console.error(err)
+    }
+  }
+)
 
-  addMessage({
-    message,
-    channel,
-    badges: tags.badges ?? {},
-    username: tags.username ?? '',
-  })
-})
+export const initTwitch = async () => {
+  await client.connect()
+
+  console.log(`Connected to the Twitch API`)
+}
+
+export const addTwitchChannel = async (...channelNames: string[]) => {
+  try {
+    for (const channelName of channelNames) await client.join(channelName)
+
+    await client.disconnect()
+    await client.connect()
+
+    console.log(`Connected to channels ${channelNames}`)
+  } catch (err) {
+    console.error(err)
+  }
+}

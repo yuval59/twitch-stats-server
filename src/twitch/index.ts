@@ -1,1 +1,1 @@
-export { initTwitch } from './server'
+export { addTwitchChannel, initTwitch } from './server'
