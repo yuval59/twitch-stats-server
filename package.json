@@ -3,6 +3,8 @@
   "version": "1.0.0",
   "main": "dist/index.js",
   "scripts": {
+    "prestart": "tsc",
+    "start": "node dist",
     "dev": "ts-node src/index",
     "dev:server": "ts-node src/dev/server",
     "dev:twitch": "ts-node src/dev/twitch",
