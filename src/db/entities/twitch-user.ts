@@ -3,34 +3,31 @@ import {
   CreateDateColumn,
   Entity,
   ManyToOne,
+  OneToMany,
   PrimaryGeneratedColumn,
   UpdateDateColumn,
 } from 'typeorm'
-import { Role } from './'
+import { Badges } from '../'
+import { Channel, Message } from './'
 
 @Entity()
-export class User {
+export class TwitchUser {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @Column('varchar', {
-    unique: true,
-  })
-  email: string
-
-  @Column('varchar', {
-    unique: true,
-  })
+  @Column('varchar')
   username: string
 
-  @Column('varchar')
-  password: string
-
-  @ManyToOne(() => Role, (role) => role.users, {
+  @ManyToOne(() => Channel, (channel) => channel.users, {
     createForeignKeyConstraints: false,
-    nullable: false,
   })
-  role: Promise<Role>
+  channel: Promise<Channel>
+
+  @Column('json')
+  badges: Badges
+
+  @OneToMany(() => Message, (message) => message.user)
+  messages: Promise<Message[]>
 
   @CreateDateColumn()
   created_at: Date

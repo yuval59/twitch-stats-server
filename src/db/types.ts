@@ -1,16 +1,3 @@
-export type NewUser = {
-  username: string
-  channel: string
-  badges: Badges
-}
-
-export type NewMessage = {
-  username: string
-  channel: string
-  message: string
-  badges: Badges
-}
-
 export type Badges = {
   admin?: string | undefined
   bits?: string | undefined
@@ -29,24 +16,6 @@ export type Badges = {
   [other: string]: string | undefined
 }
 
-export type SaveDailyParams = {
-  date: string
-}
+export type ByBadgeDaily = { [badgeName: keyof Badges]: number }
 
-export type ByChannelObject = {
-  [channel: string]: DailyChannelInfo
-}
-
-export type DailyChannelInfo = {
-  messages: number
-  byBadge: ByBadgeObject
-  byUser: ByNameObject
-}
-
-type ByBadgeObject = {
-  [badgeName: keyof Badges]: number
-}
-
-type ByNameObject = {
-  [username: string]: number
-}
+export type ByUserDaily = { [username: string]: number }

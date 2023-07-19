@@ -1,27 +1,29 @@
 import {
-  BaseEntity,
   Column,
   CreateDateColumn,
   Entity,
   ManyToOne,
   PrimaryGeneratedColumn,
 } from 'typeorm'
-import { Badges } from '../types'
-import { User } from './user'
+import { Badges } from '../'
+import { Channel, TwitchUser } from './'
 
 @Entity()
-export class Message extends BaseEntity {
+export class Message {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
-  @ManyToOne(() => User, (user) => user.messages, {
+  @ManyToOne(() => TwitchUser, (user) => user.messages, {
     createForeignKeyConstraints: false,
     eager: true,
   })
-  user: User
+  user: TwitchUser
 
-  @Column('varchar')
-  channel: string
+  @ManyToOne(() => Channel, (channel) => channel.messages, {
+    createForeignKeyConstraints: false,
+    eager: true,
+  })
+  channel: Channel
 
   @Column('text')
   message: string

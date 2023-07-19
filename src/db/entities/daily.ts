@@ -1,16 +1,22 @@
-import { BaseEntity, Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
-import { DailyChannelInfo } from '../types'
+import { Column, Entity, PrimaryGeneratedColumn } from 'typeorm'
+import { ByBadgeDaily, ByUserDaily } from '../'
 
 @Entity()
-export class Daily extends BaseEntity {
+export class Daily {
   @PrimaryGeneratedColumn('uuid')
   id: string
 
   @Column('varchar')
   channel: string
 
+  @Column('bigint')
+  messages: number
+
   @Column('json')
-  data: DailyChannelInfo
+  byUser: ByUserDaily
+
+  @Column('json')
+  byBadge: ByBadgeDaily
 
   @Column('date')
   day: string
