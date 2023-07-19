@@ -1,3 +1,5 @@
+import '@total-typescript/ts-reset'
+
 import dayjs from 'dayjs'
 import cron from 'node-cron'
 import { FORMATS } from './constants'
