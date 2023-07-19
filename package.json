@@ -24,6 +24,7 @@
     "jsonwebtoken": "^9.0.1",
     "mysql2": "^3.4.2",
     "node-cron": "^3.0.2",
+    "reflect-metadata": "^0.1.13",
     "tmi.js": "^1.8.5",
     "typeorm": "^0.3.17",
     "zod": "^3.21.4"

@@ -35,6 +35,9 @@ dependencies:
   node-cron:
     specifier: ^3.0.2
     version: 3.0.2
+  reflect-metadata:
+    specifier: ^0.1.13
+    version: 0.1.13
   tmi.js:
     specifier: ^1.8.5
     version: 1.8.5
