@@ -20,7 +20,7 @@ app.use(registerRouter)
 app.use(loginRouter)
 
 export const initServer = () => {
-  app.listen(env.SERVER_PORT)
+  app.listen(env.PORT)
 
-  console.log(`Server is running on port ${env.SERVER_PORT}`)
+  console.log(`Server is running on port ${env.PORT}`)
 }
