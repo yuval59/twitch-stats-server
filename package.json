@@ -5,7 +5,9 @@
   "scripts": {
     "dev": "ts-node src/index",
     "dev:server": "ts-node src/dev/server",
-    "dev:twitch": "ts-node src/dev/twitch"
+    "dev:twitch": "ts-node src/dev/twitch",
+    "dev:db": "ts-node src/dev/sync_db",
+    "dev:roles": "ts-node src/dev/roles"
   },
   "author": "Yuval Maron",
   "license": "MIT",

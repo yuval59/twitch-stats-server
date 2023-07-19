@@ -4,9 +4,9 @@
 import { initDB } from '../db'
 import { initServer } from '../server'
 
-const start = async () => {
+const run = async () => {
   await initDB()
-  await initServer()
+  initServer()
 }
 
-start()
+run()
