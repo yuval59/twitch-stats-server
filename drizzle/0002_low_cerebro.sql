@@ -1,0 +1,1 @@
+ALTER TABLE `message` ADD CONSTRAINT `message_username_unique` UNIQUE(`username`);
