@@ -1,54 +1,73 @@
-import { FindOptionsWhere } from 'typeorm'
-import { User, userRepository } from '../'
-import {
-  DEFAULT_ROLE,
-  GetUserParams,
-  NewUser,
-  createRole,
-  getRoleByName,
-} from './'
+import { eq } from 'drizzle-orm'
+import { uuid } from 'uuidv4'
+import { DEFAULT_ROLE } from './constants'
+import { Controller } from './controller'
+import { RoleController } from './role'
+import { UserTable } from './schemas'
+import { NewUser, User } from './types'
 
-export const createUser = async (params: NewUser) => {
-  const { email, password, username } = params
+export class UserController extends Controller {
+  static createUser = async (params: NewUser) => {
+    const { email, password, username } = params
 
-  const newUser = new User()
+    const id = uuid()
 
-  newUser.email = email
-  newUser.password = password
-  newUser.username = username
+    const role =
+      (await RoleController.getRoleByName(DEFAULT_ROLE)) ??
+      (await RoleController.createRole(DEFAULT_ROLE, 0))
 
-  newUser.role = Promise.resolve(
-    (await getRoleByName(DEFAULT_ROLE)) ?? (await createRole(DEFAULT_ROLE, 0))
-  )
+    await this.dbInstance.insert(UserTable).values({
+      id,
+      email,
+      password,
+      username,
+      roleId: role.id,
+    })
 
-  await userRepository.save(newUser)
+    return { id }
+  }
 
-  return newUser
-}
+  static getUserById = <IncludeRole extends boolean = true>(
+    id: string,
+    includeRole = true
+  ): Promise<User<IncludeRole> | undefined> =>
+    this.dbInstance.query.UserTable.findFirst({
+      where: eq(UserTable.id, id),
+      with: {
+        role: includeRole ? true : undefined,
+      },
+    })
 
-export const getUser = async (params: GetUserParams) => {
-  const queryArr: FindOptionsWhere<User>[] = []
+  static getUserByEmail = <IncludeRole extends boolean = true>(
+    email: string,
+    includeRole = true
+  ): Promise<User<IncludeRole> | undefined> =>
+    this.dbInstance.query.UserTable.findFirst({
+      where: eq(UserTable.email, email),
+      with: {
+        role: includeRole ? true : undefined,
+      },
+    })
 
-  if ('email' in params) queryArr.push({ email: params.email })
-  if ('username' in params) queryArr.push({ username: params.username })
+  static getUserByUsername = <IncludeRole extends boolean = true>(
+    username: string,
+    includeRole = true
+  ): Promise<User<IncludeRole> | undefined> =>
+    this.dbInstance.query.UserTable.findFirst({
+      where: eq(UserTable.username, username),
+      with: {
+        role: includeRole ? true : undefined,
+      },
+    })
 
-  return userRepository.findOneBy(queryArr)
-}
+  static setUserRole = async (username: string, roleName: string) => {
+    const role = await RoleController.getRoleByName(roleName)
 
-export const getUserByEmail = async (email: string) =>
-  userRepository.findOneBy({ email })
+    if (!role) throw 'Role not found'
 
-export const getUserByUsername = async (username: string) =>
-  userRepository.findOneBy({ username })
-
-export const setUserRole = async (username: string, roleName: string) => {
-  const role = await getRoleByName(roleName)
-  const user = await getUserByUsername(username)
-
-  if (!user) throw 'User not found'
-  if (!role) throw 'Role not found'
-
-  user.role = Promise.resolve(role)
-
-  userRepository.save(user)
+    await this.dbInstance
+      .update(UserTable)
+      .set({ roleId: role.id })
+      .where(eq(UserTable.username, username))
+  }
 }

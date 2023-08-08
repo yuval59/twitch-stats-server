@@ -1,16 +1,22 @@
-import { Channel, channelRepository } from '../'
+import { eq } from 'drizzle-orm'
+import { uuid } from 'uuidv4'
+import { Controller } from './controller'
+import { ChannelTable } from './schemas'
+import { Channel } from './types'
 
-export const createChannel = async (name: string) => {
-  const newChannel = new Channel()
+export class ChannelController extends Controller {
+  static createChannel = async (name: string) => {
+    await this.dbInstance.insert(ChannelTable).values({
+      id: uuid(),
+      name,
+    })
+  }
 
-  newChannel.name = name
+  static getChannels = (): Promise<Channel[]> =>
+    this.dbInstance.select().from(ChannelTable)
 
-  await channelRepository.save(newChannel)
-
-  return newChannel
+  static getChannelByName = (name: string): Promise<Channel | undefined> =>
+    this.dbInstance.query.ChannelTable.findFirst({
+      where: eq(ChannelTable.name, name),
+    })
 }
-
-export const getChannels = () => channelRepository.find()
-
-export const getChannel = async (name: string) =>
-  channelRepository.findOneBy({ name })

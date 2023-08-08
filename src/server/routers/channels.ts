@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { ROUTES } from '../'
-import { createChannel, getChannel, getChannels } from '../../db'
+import { ChannelController } from '../../db'
 import { addTwitchChannel } from '../../twitch'
 import { levelRequired, verifyJWT } from './middlewares'
 import { newChannelBodyShape } from './shapes'
@@ -13,7 +13,7 @@ channelsRouter.get(
   async (req: Request, res: Response) => {
     try {
       res.json({
-        channels: await getChannels(),
+        channels: await ChannelController.getChannels(),
       })
     } catch (err) {
       console.error(err)
@@ -34,12 +34,12 @@ channelsRouter.post(
 
       const { channelName } = parsed.data
 
-      const gotChannel = await getChannel(channelName)
+      const gotChannel = await ChannelController.getChannelByName(channelName)
 
       if (gotChannel)
         return res.json({ status: 'Success', channel: gotChannel })
 
-      const channel = await createChannel(channelName)
+      const channel = await ChannelController.createChannel(channelName)
 
       addTwitchChannel(channelName)
 

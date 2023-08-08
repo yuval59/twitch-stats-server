@@ -1,19 +1,28 @@
-import { Role, roleRepository } from '../'
+import { eq } from 'drizzle-orm'
+import { uuid } from 'uuidv4'
+import { Controller } from './controller'
+import { RoleTable } from './schemas'
+import { Role } from './types'
 
-export const createRole = async (name: string, level: number) => {
-  const oldRole = await roleRepository.findOneBy({ name: name })
+export class RoleController extends Controller {
+  static createRole = async (
+    name: string,
+    level: number
+  ): Promise<{ id: string }> => {
+    // The reason I return the object with the id is Drizzle doesn't support insert returning in MySQL, and this simplifies the user creation process
+    const id = uuid()
 
-  if (oldRole) return oldRole
+    await this.dbInstance.insert(RoleTable).values({
+      id,
+      name,
+      level,
+    })
 
-  const newRole = new Role()
+    return { id }
+  }
 
-  newRole.name = name
-  newRole.level = level
-
-  await roleRepository.save(newRole)
-
-  return newRole
+  static getRoleByName = async (name: string): Promise<Role | undefined> =>
+    this.dbInstance.query.RoleTable.findFirst({
+      where: eq(RoleTable.name, name),
+    })
 }
-
-export const getRoleByName = async (name: string) =>
-  roleRepository.findOneBy({ name })

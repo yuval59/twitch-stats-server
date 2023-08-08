@@ -1,31 +1,43 @@
-import {
-  Message,
-  getChannel,
-  getTwitchUserOrCreate,
-  messageRepository,
-} from '../'
-import { NewMessage } from './'
+import { between } from 'drizzle-orm'
+import { uuid } from 'uuidv4'
+import { ChannelController } from './channel'
+import { Controller } from './controller'
+import { MessageTable } from './schemas'
+import { Message, NewMessage } from './types'
 
-export const addMessage = async (params: NewMessage) => {
-  const { message, badges, username, channelName } =
-    params.channelName[0] == '#'
-      ? { ...params, channelName: params.channelName.replace('#', '') }
-      : params
+export class MessageController extends Controller {
+  static addMessage = async (params: NewMessage) => {
+    const { message, badges, username, channelName } =
+      params.channelName[0] == '#'
+        ? { ...params, channelName: params.channelName.replace('#', '') }
+        : params
 
-  const channel = await getChannel(channelName)
+    const channel = await ChannelController.getChannelByName(channelName)
 
-  if (!channel) return
+    if (!channel) return
 
-  const newMessage = new Message()
+    await this.dbInstance.insert(MessageTable).values({
+      id: uuid(),
+      badges,
+      message,
+      username,
+      channelId: channel.id,
+    })
 
-  const user = await getTwitchUserOrCreate({ username, badges, channel })
+    console.log(`[${channelName}] ${username}: ${message}`)
+  }
 
-  newMessage.user = user
-  newMessage.channel = channel
-  newMessage.badges = badges
-  newMessage.message = message
+  static getMessagesBetween = async (
+    minDate: Date,
+    maxDate: Date
+  ): Promise<Message<true>[]> => {
+    const res = await this.dbInstance.query.MessageTable.findMany({
+      where: between(MessageTable.timestamp, minDate, maxDate),
+      with: {
+        channel: true,
+      },
+    })
 
-  await messageRepository.save(newMessage)
-
-  console.log(`[${channelName}] ${username}: ${message}`)
+    return res as Message<true>[]
+  }
 }

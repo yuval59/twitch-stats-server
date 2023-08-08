@@ -9,24 +9,25 @@
     "dev:server": "ts-node src/dev/server",
     "dev:twitch": "ts-node src/dev/twitch",
     "dev:db": "ts-node src/dev/sync_db",
-    "dev:roles": "ts-node src/dev/roles"
+    "drizzle-generate": "drizzle-kit generate:mysql",
+    "drizzle-studio": "drizzle-kit studio"
   },
   "author": "Yuval Maron",
   "license": "MIT",
   "dependencies": {
+    "@planetscale/database": "^1.10.0",
     "@t3-oss/env-core": "^0.6.0",
     "@types/node-cron": "^3.0.8",
     "bcrypt": "^5.1.0",
     "cors": "^2.8.5",
     "dayjs": "^1.11.8",
     "dotenv": "^16.3.1",
+    "drizzle-orm": "^0.28.1",
     "express": "^4.18.2",
     "jsonwebtoken": "^9.0.1",
-    "mysql2": "^3.4.2",
     "node-cron": "^3.0.2",
-    "reflect-metadata": "^0.1.13",
     "tmi.js": "^1.8.5",
-    "typeorm": "^0.3.17",
+    "uuidv4": "^6.2.13",
     "zod": "^3.21.4"
   },
   "devDependencies": {
@@ -37,6 +38,7 @@
     "@types/jsonwebtoken": "^9.0.2",
     "@types/node": "^20.3.2",
     "@types/tmi.js": "^1.8.3",
+    "drizzle-kit": "^0.19.12",
     "ts-node": "^10.9.1",
     "typescript": "^5.1.3"
   },

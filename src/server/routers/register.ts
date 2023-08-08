@@ -1,7 +1,7 @@
 import { genSalt, hash } from 'bcrypt'
 import { Request, Response, Router } from 'express'
 import { ERRORS, ROUTES } from '../'
-import { createUser, getUserByEmail, getUserByUsername } from '../../db'
+import { UserController } from '../../db'
 import { createResJson } from './'
 import { registerBodyShape } from './shapes'
 
@@ -25,19 +25,21 @@ registerRouter.post(ROUTES.REGISTER, async (req: Request, res: Response) => {
 
     const { email, password, username } = parsed.data
 
-    if (await getUserByEmail(email))
+    if (await UserController.getUserByEmail(email))
       return res.status(400).send(ERRORS.REGISTER.EMAIL_EXISTS)
 
-    if (await getUserByUsername(username))
+    if (await UserController.getUserByUsername(username))
       return res.status(400).send(ERRORS.REGISTER.USERNAME_EXISTS)
 
-    const newUser = await createUser({
+    await UserController.createUser({
       email,
       username,
       password: await encryptPassword(password),
     })
 
-    const role = await newUser.role
+    const newUser = await UserController.getUserByUsername(username)
+
+    if (!newUser) throw 'What the hell'
 
     res.json(
       createResJson({
@@ -46,8 +48,8 @@ registerRouter.post(ROUTES.REGISTER, async (req: Request, res: Response) => {
         username,
 
         role: {
-          name: role.name,
-          level: role.level,
+          name: newUser.role.name,
+          level: newUser.role.level,
         },
       })
     )

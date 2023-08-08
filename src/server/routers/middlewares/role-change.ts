@@ -1,6 +1,6 @@
 import { NextFunction, Request, Response } from 'express'
 import { verify } from 'jsonwebtoken'
-import { getRoleByName, getUserByUsername } from '../../../db'
+import { RoleController, UserController } from '../../../db'
 import { env } from '../../../env'
 import { roleChangeBodyShape } from '../shapes'
 import { jwtDataShape } from './shapes'
@@ -31,13 +31,13 @@ export const roleChange = async (
 
         const { roleName, username } = parsedBody.data
 
-        const role = await getRoleByName(roleName)
-        const user = await getUserByUsername(username)
+        const role = await RoleController.getRoleByName(roleName)
+        const user = await UserController.getUserByUsername(username)
         const selfLevel = parsedJWT.data.role.level
 
         if (!role || !user) return res.sendStatus(400)
 
-        if (role.level > selfLevel || !((await user.role).level < selfLevel))
+        if (role.level > selfLevel || !(user.role.level < selfLevel))
           return res.sendStatus(403)
 
         next()
