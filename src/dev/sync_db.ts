@@ -1,33 +1,25 @@
 // This is for syncing the database while developing
 // Don't write actual code in here
 
-import 'reflect-metadata'
-import { DataSource } from 'typeorm'
-import { entitiesArr } from '../db'
 import { env } from '../env'
 
-const AppDataSource = new DataSource({
-  type: 'mysql',
-  host: env.DB_HOST,
-  port: env.DB_PORT,
-  username: env.DB_USER,
-  password: env.DB_PASS,
-  database: env.DB_DATABASE,
+import { connect } from '@planetscale/database'
+import { drizzle } from 'drizzle-orm/planetscale-serverless'
+import { migrate } from 'drizzle-orm/planetscale-serverless/migrator'
+import { schema } from '../db/controllers/schemas'
 
-  synchronize: true,
-  ssl: { rejectUnauthorized: true },
-
-  entities: entitiesArr,
+const connection = connect({
+  host: env.PLANETSCALE_HOST,
+  username: env.PLANETSCALE_USER,
+  password: env.PLANETSCALE_PASS,
 })
 
-const initDB = async () => {
-  await AppDataSource.initialize()
-
-  console.log('Database connected')
-}
+const db = drizzle(connection, { schema })
 
 const run = async () => {
-  await initDB()
+  await migrate(db, { migrationsFolder: 'drizzle' })
+
+  console.log('Database migrated successfully')
 }
 
 run()

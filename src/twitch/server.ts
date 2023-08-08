@@ -1,5 +1,5 @@
 import tmi from 'tmi.js'
-import { addMessage } from '../db'
+import { MessageController } from '../db'
 import { env } from '../env'
 
 const client = new tmi.Client({
@@ -17,7 +17,7 @@ const client = new tmi.Client({
 
 client.on(
   'message',
-  (
+  async (
     channel: string,
     tags: tmi.ChatUserstate,
     message: string,
@@ -26,7 +26,7 @@ client.on(
     if (self || tags['message-type'] != 'chat') return
 
     try {
-      addMessage({
+      await MessageController.addMessage({
         message,
         channelName: channel,
         badges: tags.badges ?? {},

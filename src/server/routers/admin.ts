@@ -1,6 +1,6 @@
 import { Request, Response, Router } from 'express'
 import { ROUTES } from '../'
-import { setUserRole } from '../../db'
+import { UserController } from '../../db'
 import { roleChange } from './middlewares'
 import { roleChangeBodyShape } from './shapes'
 
@@ -17,7 +17,7 @@ adminRouter.patch(
 
       const { roleName, username } = parsedBody.data
 
-      await setUserRole(username, roleName)
+      await UserController.setUserRole(username, roleName)
 
       res.json({ status: 'OK' })
     } catch (err) {

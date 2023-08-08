@@ -9,11 +9,10 @@ export const env = createEnv({
     JWT_SECRET: z.string(),
 
     // Database params
-    DB_HOST: z.string(),
-    DB_USER: z.string(),
-    DB_PASS: z.string(),
-    DB_PORT: z.string().transform((port) => parseInt(port)),
-    DB_DATABASE: z.string(),
+    PLANETSCALE_HOST: z.string(),
+    PLANETSCALE_USER: z.string(),
+    PLANETSCALE_PASS: z.string(),
+    PLANETSCALE_DB: z.string(),
 
     // Twitch params
     TWITCH_OAUTH_TOKEN: z.string(),
