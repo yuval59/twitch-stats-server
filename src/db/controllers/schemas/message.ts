@@ -13,7 +13,7 @@ export const MessageTable = mysqlTable('message', {
   message: text('message').notNull(),
   badges: json('badges').notNull(),
 
-  timestamp: timestamp('timestamp'),
+  timestamp: timestamp('timestamp').defaultNow(),
 
   channelId: varchar('channelId', { length: 36 }).notNull(),
 })

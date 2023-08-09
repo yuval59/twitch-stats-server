@@ -6,6 +6,6 @@ export const RoleTable = mysqlTable('role', {
   name: varchar('name', { length: 255 }).unique().notNull(),
   level: int('level').notNull(),
 
-  created_at: timestamp('created_at'),
-  updated_at: timestamp('updated_at'),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').onUpdateNow(),
 })

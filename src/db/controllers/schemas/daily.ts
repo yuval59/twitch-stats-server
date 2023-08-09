@@ -17,6 +17,6 @@ export const DailyTable = mysqlTable('daily', {
 
   day: date('day').notNull(),
 
-  created_at: timestamp('created_at'),
-  updated_at: timestamp('updated_at'),
+  created_at: timestamp('created_at').defaultNow(),
+  updated_at: timestamp('updated_at').onUpdateNow(),
 })
