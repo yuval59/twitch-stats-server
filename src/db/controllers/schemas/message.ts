@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import {
   json,
   mysqlTable,
@@ -13,7 +14,7 @@ export const MessageTable = mysqlTable('message', {
   message: text('message').notNull(),
   badges: json('badges').notNull(),
 
-  timestamp: timestamp('timestamp').defaultNow(),
+  timestamp: timestamp('timestamp').default(sql`CURRENT_TIMESTAMP`),
 
   channelId: varchar('channelId', { length: 36 }).notNull(),
 })

@@ -1,3 +1,4 @@
+import { sql } from 'drizzle-orm'
 import {
   date,
   int,
@@ -17,6 +18,6 @@ export const DailyTable = mysqlTable('daily', {
 
   day: date('day').notNull(),
 
-  created_at: timestamp('created_at').defaultNow(),
+  created_at: timestamp('created_at').default(sql`CURRENT_TIMESTAMP`),
   updated_at: timestamp('updated_at').onUpdateNow(),
 })
