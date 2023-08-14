@@ -9,8 +9,8 @@
     "dev:server": "ts-node src/dev/server",
     "dev:twitch": "ts-node src/dev/twitch",
     "dev:db": "ts-node src/dev/sync_db",
-    "drizzle-generate": "drizzle-kit generate:mysql",
-    "drizzle-studio": "drizzle-kit studio"
+    "generate": "drizzle-kit generate:mysql",
+    "studio": "drizzle-kit studio"
   },
   "author": "Yuval Maron",
   "license": "MIT",
